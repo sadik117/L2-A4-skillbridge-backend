@@ -25,12 +25,14 @@ enum Status {
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
-  role     Role   @default(STUDENT)
-  status   Status @default(ACTIVE)
+  id            String  @id @default(uuid())
+  name          String
+  email         String  @unique
+  password      String?
+  image         String?
+  emailVerified Boolean @default(false)
+  role          Role    @default(STUDENT)
+  status        Status  @default(ACTIVE)
 
   tutorProfile TutorProfile?
   bookings     Booking[]     @relation("StudentBookings")
