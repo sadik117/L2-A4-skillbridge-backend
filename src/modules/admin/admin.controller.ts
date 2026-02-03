@@ -1,17 +1,25 @@
-import { prisma } from "../../lib/prisma";
+import { Request, Response } from "express";
+import { adminService } from "./admin.service";
 
- const getUsers = async () => {
-  return prisma.user.findMany();
+
+ const listUsers = async (_req: Request, res: Response) => {
+  const users = await adminService.getAllUsers();
+  res.status(200).json({ success: true, data: users });
 };
 
- const updateStatus = async (id: string, status: any) => {
-  return prisma.user.update({
-    where: { id },
-    data: { status },
+ const changeUserStatus = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const updatedUser = await adminService.updateUserStatus(id as string, status);
+  res.status(200).json({
+    success: true,
+    message: `User status updated to ${status}`,
+    data: updatedUser,
   });
 };
 
 export const adminController = {
-    getUsers,
-    updateStatus
-}
+  listUsers,
+  changeUserStatus,
+};

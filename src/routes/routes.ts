@@ -6,7 +6,7 @@ import bookingRouter from "../modules/booking/booking.routes";
 const routes = Router();
 
 routes.use("/tutor", tutorRouter);
-routes.use("/admin", adminRouter);
 routes.use("/booking", bookingRouter);
+routes.use("/admin", adminRouter);
 
 export default routes;
