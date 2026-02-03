@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { adminService } from "./admin.service";
 
 
- const listUsers = async (_req: Request, res: Response) => {
+ const getUsers = async (_req: Request, res: Response) => {
   const users = await adminService.getAllUsers();
   res.status(200).json({ success: true, data: users });
 };
@@ -20,6 +20,6 @@ import { adminService } from "./admin.service";
 };
 
 export const adminController = {
-  listUsers,
+  getUsers,
   changeUserStatus,
 };
