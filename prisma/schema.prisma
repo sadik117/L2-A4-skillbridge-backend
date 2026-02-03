@@ -80,8 +80,11 @@ model AvailabilitySlot {
   tutorProfileId String
   tutorProfile   TutorProfile @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
 
-  startTime DateTime
-  endTime   DateTime
+  isBooked Boolean @default(false)
+
+  startTime  DateTime
+  endTime    DateTime
+  daysOfWeek String[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
