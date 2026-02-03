@@ -1,4 +1,3 @@
-import { get } from "node:http";
 import { prisma } from "../../lib/prisma";
 
  const upsertTutorProfile = async (

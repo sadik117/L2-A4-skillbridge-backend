@@ -1,9 +1,11 @@
 import { Router } from "express";
 import { adminController } from "./admin.controller";
+import auth from "../../middleware/auth";
 
 const adminRouter = Router();
 
-adminRouter.get("/all-users", adminController.getUsers);
-adminRouter.patch("/user/:id/status", adminController.changeUserStatus);
+adminRouter.get("/all-users", auth("user", "read"), adminController.getUsers);
+
+adminRouter.patch("/user/:id/status", auth("user", "update"), adminController.changeUserStatus);
 
 export default adminRouter;
