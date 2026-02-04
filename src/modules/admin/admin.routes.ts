@@ -6,6 +6,6 @@ const adminRouter = Router();
 
 adminRouter.get("/all-users", auth("user", "read"), adminController.getUsers);
 
-adminRouter.patch("/user/:id/status", auth("user", "update"), adminController.changeUserStatus);
+adminRouter.patch("/user/status/:id", auth("user", "update"), adminController.changeUserStatus);
 
 export default adminRouter;

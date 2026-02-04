@@ -1,38 +1,30 @@
+import { auth } from "./auth"; 
 import { prisma } from "./prisma";
-import { hashPassword } from "better-auth/crypto"; 
 
 async function seedAdmin() {
+  const email = "admin@gmail.com";
+  const password = "123456";
+
   try {
-    const email = "admin@gmail.com";
-
-    const existingAdmin = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingAdmin) {
-      console.log("Admin already exists. Skipping seed.");
-      return;
-    }
-
-    const hashedPassword = await hashPassword("123456");
-
-    await prisma.user.create({
-      data: {
+    //  Using  Better Auth Internal API 
+    await auth.api.createUser({
+      body: {
+        email,
+        password,
         name: "Admin",
-        email: email,
-        password: hashedPassword,
         role: "ADMIN",
-        emailVerified: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
     });
 
-    console.log("Admin seeding done!");
+    // verify the email manually
+    await prisma.user.update({
+      where: { email },
+      data: { emailVerified: true }
+    });
+
+    console.log("Admin seeded successfully!!");
   } catch (error) {
     console.error("Seeding failed:", error);
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
