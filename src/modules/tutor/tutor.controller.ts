@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { tutorService } from "./tutor.service";
 import { get } from "node:http";
+import { prisma } from "../../lib/prisma";
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -22,9 +23,16 @@ const upsertProfile = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 const setAvailability = async (req: AuthenticatedRequest, res: Response) => {
-  const tutorProfileId = req.user?.tutorProfile?.id;
+  const userId = req.user!.id;
 
-  if (!tutorProfileId) {
+  // alternative way to get tutor profile
+  // const tutorProfile = await prisma.tutorProfile.findUnique({
+  //   where: { userId },
+  // });
+
+  const tutorProfile = await tutorService.getMyProfile(userId);
+
+  if (!tutorProfile) {
     return res.status(403).json({
       success: false,
       message: "Tutor profile not found",
@@ -40,7 +48,7 @@ const setAvailability = async (req: AuthenticatedRequest, res: Response) => {
     });
   }
 
-  await tutorService.createAvailabilitySlots(tutorProfileId, slots);
+  await tutorService.createAvailabilitySlots(tutorProfile.id, slots);
 
   res.status(201).json({
     success: true,

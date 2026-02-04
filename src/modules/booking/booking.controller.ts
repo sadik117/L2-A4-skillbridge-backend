@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { bookingService } from "./booking.service";
+import { tutorService } from "../tutor/tutor.service";
 
 declare global {
   namespace Express {
@@ -31,11 +32,14 @@ declare global {
 
 
  const tutorBookings = async (req: Request, res: Response) => {
-  const tutorId = req.user?.tutorProfile?.id;
-  if (!tutorId) {
+  const tutorId = req.user!.id;
+
+  const tutorProfile = await tutorService.getMyProfile(tutorId);
+
+  if (!tutorProfile) {
     return res.status(403).json({ success: false, message: "Tutor profile not found" });
   }
-  const bookings = await bookingService.getTutorBookings(tutorId);
+  const bookings = await bookingService.getTutorBookings(tutorProfile.id);
   res.json({ success: true, data: bookings });
 };
 
