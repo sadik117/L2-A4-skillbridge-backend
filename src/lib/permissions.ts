@@ -21,7 +21,7 @@ export const adminRole = ac.newRole({
 export const tutorRole = ac.newRole({
   tutorProfile: ["create", "read", "update"], 
   booking: ["read", "update", "cancel"],
-  subjectCategory: ["create", "read", "update", "delete"],
+  subjectCategory: ["read"],
   review: ["read"],
 });
 

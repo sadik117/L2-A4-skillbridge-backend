@@ -4,6 +4,7 @@ import adminRouter from "../modules/admin/admin.routes";
 import bookingRouter from "../modules/booking/booking.routes";
 import categoryRouter from "../modules/category/category.routes";
 import reviewRouter from "../modules/review/review.routes";
+import studentRouter from "../modules/student/student.routes";
 
 const routes = Router();
 
@@ -12,5 +13,6 @@ routes.use("/booking", bookingRouter);
 routes.use("/admin", adminRouter);
 routes.use("/category", categoryRouter)
 routes.use("/review", reviewRouter);
+routes.use("/student", studentRouter);
 
 export default routes;

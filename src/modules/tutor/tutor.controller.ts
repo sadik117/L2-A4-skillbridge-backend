@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { tutorService } from "./tutor.service";
+import { get } from "node:http";
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -22,13 +23,22 @@ const upsertProfile = async (req: AuthenticatedRequest, res: Response) => {
 
 const setAvailability = async (req: AuthenticatedRequest, res: Response) => {
   const tutorProfileId = req.user?.tutorProfile?.id;
+
   if (!tutorProfileId) {
     return res.status(403).json({
       success: false,
       message: "Tutor profile not found",
     });
   }
+
   const { slots } = req.body;
+
+  if (!Array.isArray(slots) || slots.length === 0) {
+    return res.status(400).json({
+      success: false,
+      message: "Slots must be a non-empty array",
+    });
+  }
 
   await tutorService.createAvailabilitySlots(tutorProfileId, slots);
 
@@ -64,12 +74,35 @@ const getTutors = async (req: Request, res: Response) => {
 };
 
 const tutorProfile = async (req: Request, res: Response) => {
-  const tutor = await tutorService.getTutorDetails(req.params.id as string);
+  const { tutorId } = req.params;
 
-  res.status(200).json({
-    success: true,
-    data: tutor,
-  });
+  if (!tutorId)
+    return res.status(400).json({
+      success: false,
+      message: "Tutor id is required",
+    });
+
+  try {
+    const tutor = await tutorService.getTutorDetails(tutorId as string);
+    if (!tutor) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Tutor not found" });
+    }
+    res.json({ success: true, data: tutor });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+const getMyProfile = async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
+
+  const tutor = await tutorService.getMyProfile(userId);
+
+  res.json({ success: true, data: tutor });
 };
 
 export const tutorController = {
@@ -78,4 +111,5 @@ export const tutorController = {
   tutorSessions,
   getTutors,
   tutorProfile,
+  getMyProfile,
 };
