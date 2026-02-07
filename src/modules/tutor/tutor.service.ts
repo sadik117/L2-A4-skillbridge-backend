@@ -133,6 +133,7 @@ const getTutorDetails = async (id: string) => {
     where: { id },
     include: {
       user: true,
+      category: true, 
       reviews: {
         include: {
           student: {
@@ -147,6 +148,7 @@ const getTutorDetails = async (id: string) => {
     },
   });
 };
+
 
 const getMyProfile = async (userId: string) => {
   return prisma.tutorProfile.findUnique({
