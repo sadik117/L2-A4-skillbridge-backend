@@ -39,7 +39,6 @@ const upsertTutorProfile = async (
   });
 };
 
-
 const createAvailabilitySlots = async (
   tutorProfileId: string,
   slots: {
@@ -78,16 +77,54 @@ const getTutorSessions = async (tutorProfileId: string) => {
   });
 };
 
-const getTutors = async (filters: any) => {
+const getTutor = async (filters: { search?: string; categoryId?: string }) => {
+  const { search, categoryId } = filters;
+
   return prisma.tutorProfile.findMany({
     where: {
-      categoryId: filters.categoryId || undefined,
+      AND: [
+        categoryId ? { categoryId } : {},
+        search
+          ? {
+              OR: [
+                {
+                  bio: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  category: {
+                    name: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+                {
+                  user: {
+                    name: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              ],
+            }
+          : {},
+      ],
     },
     include: {
       user: true,
-      reviews: true,
       category: true,
+      reviews: true,
     },
+  });
+};
+
+const getAllTutors = async () => {
+  return prisma.tutorProfile.findMany({
+    include: { user: true, category: true, reviews: true },
   });
 };
 
@@ -131,7 +168,8 @@ export const tutorService = {
   upsertTutorProfile,
   createAvailabilitySlots,
   getTutorSessions,
-  getTutors,
+  getTutor,
   getTutorDetails,
   getMyProfile,
+  getAllTutors
 };

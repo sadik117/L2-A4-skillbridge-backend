@@ -5,13 +5,15 @@ import auth from "../../middleware/auth";
 
 const tutorRouter = Router();
 
-tutorRouter.put("/profile", auth("tutorProfile", "update"), tutorController.upsertProfile);
+tutorRouter.get("/",  tutorController.getTutor);
+
+tutorRouter.get("/browse-tutors", tutorController.getAllTutors);
+
+tutorRouter.put("/profile", tutorController.upsertProfile);
 
 tutorRouter.post("/set-availability", auth("tutorProfile", "create"), tutorController.setAvailability);
 
 tutorRouter.get("/sessions", auth("booking", "read"), tutorController.tutorSessions);
-
-tutorRouter.get("/all-tutors", auth("tutorProfile", "read"), tutorController.getTutors);
 
 tutorRouter.get("/profile/:tutorId", auth("tutorProfile", "read"), tutorController.tutorProfile);
 

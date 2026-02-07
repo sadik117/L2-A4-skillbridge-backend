@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { tutorService } from "./tutor.service";
-import { get } from "node:http";
-import { prisma } from "../../lib/prisma";
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -72,14 +70,18 @@ const tutorSessions = async (req: AuthenticatedRequest, res: Response) => {
   });
 };
 
-const getTutors = async (req: Request, res: Response) => {
-  const tutors = await tutorService.getTutors(req.query);
+const getTutor = async (req: Request, res: Response) => {
+  const tutors = await tutorService.getTutor({
+    search: req.query.search as string,
+    categoryId: req.query.categoryId as string,
+  });
 
   res.status(200).json({
     success: true,
     data: tutors,
   });
 };
+
 
 const tutorProfile = async (req: Request, res: Response) => {
   const { tutorId } = req.params;
@@ -104,6 +106,14 @@ const tutorProfile = async (req: Request, res: Response) => {
   }
 };
 
+const getAllTutors = async (req: Request, res: Response) => {
+  const tutors = await tutorService.getAllTutors(); 
+  res.status(200).json({
+    success: true,
+    data: tutors,
+  });
+};
+
 const getMyProfile = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user?.id;
   if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -117,7 +127,8 @@ export const tutorController = {
   upsertProfile,
   setAvailability,
   tutorSessions,
-  getTutors,
+  getTutor,
   tutorProfile,
   getMyProfile,
+  getAllTutors,
 };
