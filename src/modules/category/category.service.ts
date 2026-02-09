@@ -10,6 +10,7 @@ import { prisma } from "../../lib/prisma";
  const getCategories = async () => {
   return prisma.subjectCategory.findMany({
     where: { isActive: true },
+    orderBy: { name: "asc" },
   });
 };
 

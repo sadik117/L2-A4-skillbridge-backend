@@ -12,7 +12,7 @@ const routes = Router();
 routes.use("/tutor", tutorRouter);
 routes.use("/booking", bookingRouter);
 routes.use("/admin", adminRouter);
-routes.use("/category", categoryRouter)
+routes.use("/categories", categoryRouter)
 routes.use("/review", reviewRouter);
 routes.use("/student", studentRouter);
 routes.use("/user", userRouter);

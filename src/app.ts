@@ -4,12 +4,13 @@ import { Request, Response } from "express";
 import { auth } from "./lib/auth";
 import { toNodeHandler } from "better-auth/node";
 import routes from "./routes/routes";
-import { prisma } from "./lib/prisma";
-import { uuid, uuidv4 } from "better-auth/*";
+import cookieParser from 'cookie-parser';
+
 
 const app: Application = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(
   cors({

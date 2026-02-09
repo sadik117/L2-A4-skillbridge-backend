@@ -1,24 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import { auth as betterAuth } from "../lib/auth";
 
-
-type Resource = "user" | "tutorProfile" | "booking" | "subjectCategory" | "review";
-
-const auth = (resource: Resource, action: string) => {
+const auth = (resource: string, action: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-
+      // betterAuth will check cookies automatically
       const session = await betterAuth.api.getSession({
         headers: req.headers,
       });
-      
+
       if (!session) {
-        return res.status(401).send({ message: "Unauthorized!" });
+        return res.status(401).json({ message: "Unauthorized!" });
       }
 
-      const role = (session.user.role === null || session.user.role === undefined)
-        ? undefined
-        : (session.user.role as "STUDENT" | "TUTOR" | "ADMIN" );
+      const role = session.user.role as "STUDENT" | "TUTOR" | "ADMIN";
 
       const hasPermission = await betterAuth.api.userHasPermission({
         body: {
@@ -29,18 +24,16 @@ const auth = (resource: Resource, action: string) => {
       });
 
       if (!hasPermission || !hasPermission.success) {
-        return res.status(403).send({ 
+        return res.status(403).json({ 
           message: `Forbidden: You do not have permission to ${action} ${resource}!`,
         });
       }
 
       (req as any).user = session.user;
-
       next();
-
-    } catch (error) {
-      console.error("Auth Middleware Error:", error);
-      return res.status(500).send({ message: "Internal Server Error" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   };
 };

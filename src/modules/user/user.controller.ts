@@ -20,7 +20,7 @@ export const updateRoleController = async (
     if (!user) {
       return res.status(401).json({ message: "Unauthorized: No user session found" });
     }
-    console.log(user);
+    // console.log(user);
 
     const { role } = req.body;
     if (!role || !Object.values(Role).includes(role)) {
