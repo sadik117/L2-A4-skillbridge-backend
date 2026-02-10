@@ -62,7 +62,7 @@ const tutorSessions = async (req: AuthenticatedRequest, res: Response) => {
       message: "Tutor profile not found",
     });
   }
-  const sessions = await tutorService.getTutorSessions(tutorProfileId);
+  const sessions = await tutorService.getTutorBookings(tutorProfileId);
 
   res.status(200).json({
     success: true,

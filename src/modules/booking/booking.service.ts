@@ -40,9 +40,19 @@ const createBooking = async (
  const getTutorBookings = async (tutorId: string) => {
   return prisma.booking.findMany({
     where: { tutorId },
-    include: { student: true },
+    include: {
+      student: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+    orderBy: { startTime: "desc" },
   });
 };
+
 
 const completeSession = async (bookingId: string) => {
   return prisma.booking.update({

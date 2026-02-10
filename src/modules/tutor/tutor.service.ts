@@ -1,3 +1,4 @@
+import { get } from "node:http";
 import { prisma } from "../../lib/prisma";
 
 const upsertTutorProfile = async (
@@ -7,13 +8,12 @@ const upsertTutorProfile = async (
     hourlyRate: number;
     experience: number;
     categoryId: string;
-  },
+  }
 ) => {
   const { bio, hourlyRate, experience, categoryId } = data;
 
   return prisma.tutorProfile.upsert({
     where: { userId },
-
     update: {
       bio,
       hourlyRate,
@@ -22,19 +22,12 @@ const upsertTutorProfile = async (
         connect: { id: categoryId },
       },
     },
-
     create: {
       bio,
       hourlyRate,
       experience,
-
-      user: {
-        connect: { id: userId },
-      },
-
-      category: {
-        connect: { id: categoryId },
-      },
+      user: { connect: { id: userId } },
+      category: { connect: { id: categoryId } },
     },
   });
 };
@@ -45,7 +38,7 @@ const createAvailabilitySlots = async (
     startTime: string;
     endTime: string;
     daysOfWeek: string[];
-  }[],
+  }[]
 ) => {
   if (!slots || slots.length === 0) {
     throw new Error("No availability slots provided");
@@ -62,7 +55,7 @@ const createAvailabilitySlots = async (
   });
 };
 
-const getTutorSessions = async (tutorProfileId: string) => {
+const getTutorBookings = async (tutorProfileId: string) => {
   return prisma.booking.findMany({
     where: { tutorId: tutorProfileId },
     include: {
@@ -87,28 +80,9 @@ const getTutor = async (filters: { search?: string; categoryId?: string }) => {
         search
           ? {
               OR: [
-                {
-                  bio: {
-                    contains: search,
-                    mode: "insensitive",
-                  },
-                },
-                {
-                  category: {
-                    name: {
-                      contains: search,
-                      mode: "insensitive",
-                    },
-                  },
-                },
-                {
-                  user: {
-                    name: {
-                      contains: search,
-                      mode: "insensitive",
-                    },
-                  },
-                },
+                { bio: { contains: search, mode: "insensitive" } },
+                { category: { name: { contains: search, mode: "insensitive" } } },
+                { user: { name: { contains: search, mode: "insensitive" } } },
               ],
             }
           : {},
@@ -133,22 +107,16 @@ const getTutorDetails = async (id: string) => {
     where: { id },
     include: {
       user: true,
-      category: true, 
+      category: true,
       reviews: {
         include: {
-          student: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
+          student: { select: { id: true, name: true } },
         },
       },
       availability: true,
     },
   });
 };
-
 
 const getMyProfile = async (userId: string) => {
   return prisma.tutorProfile.findUnique({
@@ -169,9 +137,9 @@ const getMyProfile = async (userId: string) => {
 export const tutorService = {
   upsertTutorProfile,
   createAvailabilitySlots,
-  getTutorSessions,
+  getTutorBookings,
   getTutor,
   getTutorDetails,
   getMyProfile,
-  getAllTutors
+  getAllTutors,
 };

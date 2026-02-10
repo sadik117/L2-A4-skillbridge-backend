@@ -19,7 +19,18 @@ import { adminService } from "./admin.service";
   });
 };
 
+const getStatistics = async (req: Request, res: Response) => {
+  try {
+    const stats = await adminService.getDashboardStats();
+    res.json({ success: true, data: stats });
+  } catch (error: any) {
+    console.error("Admin dashboard error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch admin dashboard stats" });
+  }
+};
+
 export const adminController = {
   getUsers,
   changeUserStatus,
+  getStatistics,
 };
