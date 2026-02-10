@@ -25,12 +25,6 @@ declare global {
 };
 
 
- const studentBookings = async (req: Request, res: Response) => {
-  const bookings = await bookingService.getStudentBookings(req.user!.id);
-  res.json({ success: true, data: bookings });
-};
-
-
  const tutorBookings = async (req: Request, res: Response) => {
   const tutorId = req.user!.id;
 
@@ -43,6 +37,23 @@ declare global {
   res.json({ success: true, data: bookings });
 };
 
+const completeSession = async (req: Request, res: Response) => {
+  const bookingId = req.params.id;
+
+  if (!bookingId) {
+    return res.status(400).json({
+      success: false,
+      message: "Booking ID is required",
+    });
+  }
+
+  const booking = await bookingService.completeSession(bookingId as string);
+
+  res.status(200).json({
+    success: true,
+    data: booking,
+  });
+};
 
  const allBookings = async (req: Request, res: Response) => {
   const bookings = await bookingService.getAllBookings();
@@ -51,7 +62,7 @@ declare global {
 
 export const bookingController = {
   bookSession,
-  studentBookings,
   tutorBookings,
   allBookings,
+  completeSession,
 };

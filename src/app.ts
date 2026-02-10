@@ -1,4 +1,4 @@
-import express, { Application } from "express";
+import express, { Application, NextFunction } from "express";
 import cors from "cors";
 import { Request, Response } from "express";
 import { auth } from "./lib/auth";
@@ -23,6 +23,16 @@ app.use(
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use("/api/v1", routes);
+
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  const status = err.statusCode || 500;
+
+  res.status(status).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+});
+
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, You are in Skill Bridge!");

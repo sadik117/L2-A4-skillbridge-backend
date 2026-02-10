@@ -6,9 +6,14 @@ const bookingRouter = Router();
 
 bookingRouter.post("/book-session", auth("booking", "create"), bookingController.bookSession);
 
-bookingRouter.get("/student-bookings", auth("booking", "read"), bookingController.studentBookings);
-
 bookingRouter.get("/tutor-bookings", auth("booking", "read"), bookingController.tutorBookings);
+
+bookingRouter.patch(
+  "/complete/:id",
+  auth("booking", "update"),
+  bookingController.completeSession
+);
+
 
 bookingRouter.get("/all-bookings", auth("booking", "read"), bookingController.allBookings);
 

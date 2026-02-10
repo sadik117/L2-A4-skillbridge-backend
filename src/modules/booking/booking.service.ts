@@ -36,15 +36,6 @@ const createBooking = async (
   });
 };
 
- const getStudentBookings = async (studentId: string) => {
-  return prisma.booking.findMany({
-    where: { studentId },
-    include: {
-      tutor: { include: { user: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-};
 
  const getTutorBookings = async (tutorId: string) => {
   return prisma.booking.findMany({
@@ -52,6 +43,16 @@ const createBooking = async (
     include: { student: true },
   });
 };
+
+const completeSession = async (bookingId: string) => {
+  return prisma.booking.update({
+    where: { id: bookingId },
+    data: {
+      status: "COMPLETED",
+    },
+  });
+};
+
 
  const getAllBookings = async () => {
   return prisma.booking.findMany({
@@ -64,7 +65,7 @@ const createBooking = async (
 
 export const bookingService = {
   createBooking,
-  getStudentBookings,
   getTutorBookings,
+  completeSession,
   getAllBookings,
 };

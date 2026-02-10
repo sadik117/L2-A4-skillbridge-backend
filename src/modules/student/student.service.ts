@@ -21,7 +21,7 @@ const getStudentBookings = async (studentId: string) => {
   return prisma.booking.findMany({
     where: { studentId },
     include: {
-      tutor: { include: { user: true, category: true } },
+      tutor: { include: { user: true, category: true, } },
     },
     orderBy: { startTime: "desc" },
   });
