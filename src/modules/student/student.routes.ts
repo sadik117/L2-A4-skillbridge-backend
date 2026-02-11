@@ -8,4 +8,6 @@ studentRouter.get("/my-profile", auth("user", "read"), studentController.myStude
 
 studentRouter.get("/my-bookings", auth("user", "read"), studentController.studentBookings);
 
+studentRouter.get("/available-sessions", studentController.getAvailableSlots);
+
 export default studentRouter;

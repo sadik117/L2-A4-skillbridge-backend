@@ -25,7 +25,17 @@ const studentBookings = async (req: AuthenticatedRequest, res: Response) => {
   res.json({ success: true, data: bookings });
 };
 
+const getAvailableSlots = async (req: Request, res: Response) => {
+  const slots = await studentService.getAvailableSessions();
+
+  res.json({
+    success: true,
+    data: slots,
+  });
+};
+
 export const studentController = {
   myStudentProfile,
   studentBookings,
+  getAvailableSlots,
 };

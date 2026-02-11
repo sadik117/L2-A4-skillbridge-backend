@@ -70,6 +70,7 @@ const getTutorBookings = async (tutorProfileId: string) => {
   });
 };
 
+
 const getTutor = async (filters: { search?: string; categoryId?: string }) => {
   const { search, categoryId } = filters;
 

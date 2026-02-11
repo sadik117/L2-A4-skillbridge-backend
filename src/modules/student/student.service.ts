@@ -27,7 +27,28 @@ const getStudentBookings = async (studentId: string) => {
   });
 };
 
+
+const getAvailableSessions = async () => {
+  return prisma.availabilitySlot.findMany({
+    where: {
+      isBooked: false,
+    },
+    include: {
+      tutorProfile: {
+        include: {
+          user: true,
+          category: true,
+        },
+      },
+    },
+    orderBy: {
+      startTime: "asc",
+    },
+  });
+};
+
 export const studentService = {
   getStudentProfile,
   getStudentBookings,
+  getAvailableSessions,
 };
