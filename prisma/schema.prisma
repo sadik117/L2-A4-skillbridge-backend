@@ -48,7 +48,7 @@ model User {
   banReason  String?
   banExpires DateTime?
 
-  @@map("user")
+  @@map("User")
 }
 
 model TutorProfile {
@@ -67,6 +67,8 @@ model TutorProfile {
   reviews      Review[]
 
   createdAt DateTime @default(now())
+
+  @@map("TutorProfile")
 }
 
 model SubjectCategory {
@@ -117,6 +119,8 @@ model Booking {
   review Review?
 
   createdAt DateTime @default(now())
+
+  @@map("Booking")
 }
 
 model Review {
@@ -135,6 +139,8 @@ model Review {
   booking   Booking @relation(fields: [bookingId], references: [id])
 
   createdAt DateTime @default(now())
+
+  @@map("Review")
 }
 
 model Session {
