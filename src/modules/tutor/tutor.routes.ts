@@ -19,4 +19,6 @@ tutorRouter.get("/profile/:tutorId", tutorController.tutorProfile);
 
 tutorRouter.get("/my-profile", auth("tutorProfile", "read"), tutorController.getMyProfile);
 
+tutorRouter.get("/featured", tutorController.getFeaturedTutors);
+
 export default tutorRouter;

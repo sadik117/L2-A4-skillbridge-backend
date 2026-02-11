@@ -123,6 +123,12 @@ const getMyProfile = async (req: AuthenticatedRequest, res: Response) => {
   res.json({ success: true, data: tutor });
 };
 
+const getFeaturedTutors = async (req: Request, res: Response) => {
+  const tutors = await tutorService.getFeaturedTutors();
+  res.json({ success: true, data: tutors });
+};
+
+
 export const tutorController = {
   upsertProfile,
   setAvailability,
@@ -131,4 +137,5 @@ export const tutorController = {
   tutorProfile,
   getMyProfile,
   getAllTutors,
+  getFeaturedTutors,
 };

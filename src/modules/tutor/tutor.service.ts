@@ -134,6 +134,41 @@ const getMyProfile = async (userId: string) => {
   });
 };
 
+const getFeaturedTutors = async () => {
+  const tutors = await prisma.tutorProfile.findMany({
+    take: 6,
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+        },
+      },
+      category: true,
+      reviews: true,
+    },
+    orderBy: {
+      createdAt: "desc", 
+    },
+  });
+
+  return tutors.map((tutor) => {
+    const avgRating =
+      tutor.reviews.length > 0
+        ? tutor.reviews.reduce((sum, r) => sum + r.rating, 0) /
+          tutor.reviews.length
+        : 0;
+
+    return {
+      ...tutor,
+      avgRating: Number(avgRating.toFixed(1)),
+      totalReviews: tutor.reviews.length,
+    };
+  });
+};
+
+
 export const tutorService = {
   upsertTutorProfile,
   createAvailabilitySlots,
@@ -142,4 +177,5 @@ export const tutorService = {
   getTutorDetails,
   getMyProfile,
   getAllTutors,
+  getFeaturedTutors,
 };
