@@ -1,7 +1,10 @@
 // src/app.ts
 import express from "express";
 import cors from "cors";
+<<<<<<< HEAD
 import cookieParser from "cookie-parser";
+=======
+>>>>>>> b73462c (google login added)
 
 // src/lib/auth.ts
 import { betterAuth } from "better-auth";
@@ -126,11 +129,16 @@ var studentRole = ac.newRole({
 // src/lib/auth.ts
 var auth = betterAuth({
   appName: "Skill Bridge",
+<<<<<<< HEAD
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:5000",
+=======
+  baseURL: process.env.BETTER_AUTH_URL,
+>>>>>>> b73462c (google login added)
   basePath: "/api/auth",
   database: prismaAdapter(prisma, {
     provider: "postgresql"
   }),
+<<<<<<< HEAD
   trustedOrigins: async (request) => {
     const origin = request?.headers.get("origin");
     const allowedOrigins2 = [
@@ -146,6 +154,9 @@ var auth = betterAuth({
     }
     return [];
   },
+=======
+  trustedOrigins: [process.env.FRONTEND_URL],
+>>>>>>> b73462c (google login added)
   user: {
     additionalFields: {
       role: {
@@ -166,12 +177,15 @@ var auth = betterAuth({
     enabled: true,
     minPasswordLength: 6
   },
+<<<<<<< HEAD
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET
     }
   },
+=======
+>>>>>>> b73462c (google login added)
   plugins: [
     admin({
       adminRoles: ["ADMIN"],
@@ -182,6 +196,7 @@ var auth = betterAuth({
         STUDENT: studentRole
       }
     })
+<<<<<<< HEAD
   ],
   session: {
     cookieCache: {
@@ -203,6 +218,9 @@ var auth = betterAuth({
     },
     disableCSRFCheck: true
   }
+=======
+  ]
+>>>>>>> b73462c (google login added)
 });
 
 // src/app.ts
@@ -955,6 +973,7 @@ routes.use("/user", user_routes_default);
 var routes_default = routes;
 
 // src/app.ts
+<<<<<<< HEAD
 var app = express();
 app.set("trust proxy", 1);
 app.use(express.json());
@@ -979,21 +998,41 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
     exposedHeaders: ["Set-Cookie"]
+=======
+import cookieParser from "cookie-parser";
+var app = express();
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true
+>>>>>>> b73462c (google login added)
   })
 );
 app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use("/api/v1", routes_default);
+<<<<<<< HEAD
 app.get("/", (req, res) => {
   res.send("Hello, You are in Skill Bridge!");
 });
 app.use((err, req, res, next) => {
   console.error("ERROR:", err);
+=======
+app.use((err, req, res, next) => {
+>>>>>>> b73462c (google login added)
   const status = err.statusCode || 500;
   res.status(status).json({
     success: false,
     message: err.message || "Internal Server Error"
   });
 });
+<<<<<<< HEAD
+=======
+app.get("/", (req, res) => {
+  res.send("Hello, You are in Skill Bridge!");
+});
+>>>>>>> b73462c (google login added)
 var app_default = app;
 
 // src/index.ts
