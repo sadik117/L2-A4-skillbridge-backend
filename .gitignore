@@ -5,4 +5,4 @@ dist
 src/generated/prisma
 .vercel
 
-api/index.js
+api
