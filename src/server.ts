@@ -1,5 +1,6 @@
 import app from "./app";
 import { prisma } from "./lib/prisma";
+import "dotenv/config";
 
 const port = process.env.PORT;
 
@@ -8,9 +9,9 @@ async function server() {
   try {
     await prisma.$connect();
 
-    // app.listen(port, () => {
-    //   console.log(`Server is running at ${port}`);
-    // });
+    app.listen(port, () => {
+      console.log(`Server is running at ${port}`);
+    });
 
   } catch (error) {
     console.log(error);

@@ -15,6 +15,7 @@ app.use(cookieParser());
 // Configure CORS to allow both production and Vercel preview deployments
 const allowedOrigins = [
   process.env.FRONTEND_URL || "http://localhost:3000",
+  "http://localhost:3000",
   process.env.PROD_FRONTEND_URL, // Production frontend URL
 ].filter(Boolean); // Remove undefined values
 
