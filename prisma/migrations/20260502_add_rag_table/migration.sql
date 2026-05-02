@@ -6,7 +6,7 @@ CREATE TABLE "rag_document_embeddings" (
     "sourceLabel" TEXT,
     "content" TEXT NOT NULL,
     "metadata" JSONB,
-    "embedding" vector(1536),
+    "embedding" vector(2048),
     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "deletedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

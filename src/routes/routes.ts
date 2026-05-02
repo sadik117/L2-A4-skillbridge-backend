@@ -6,6 +6,7 @@ import categoryRouter from "../modules/category/category.routes";
 import reviewRouter from "../modules/review/review.routes";
 import studentRouter from "../modules/student/student.routes";
 import userRouter from "../modules/user/user.routes";
+import { ragRouter } from "../modules/rag/rag.routes";
 
 const routes = Router();
 
@@ -16,5 +17,6 @@ routes.use("/categories", categoryRouter)
 routes.use("/review", reviewRouter);
 routes.use("/student", studentRouter);
 routes.use("/user", userRouter);
+routes.use("/rag", ragRouter);
 
 export default routes;

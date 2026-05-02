@@ -17,7 +17,7 @@ model RagDocumentEmbedding {
   sourceLabel String?
   content     String
   metadata    Json?
-  embedding   Unsupported("vector")?
+  embedding   Unsupported("vector(2048)")?
   isDeleted   Boolean                @default(false)
   deletedAt   DateTime?
   createdAt   DateTime               @default(now())
