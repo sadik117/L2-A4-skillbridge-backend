@@ -89,19 +89,19 @@ export class IndexingService {
         const avgRating =
           tutor.reviews.length > 0
             ? Number(
-                (
-                  tutor.reviews.reduce((acc, r) => acc + r.rating, 0) /
-                  tutor.reviews.length
-                ).toFixed(1),
-              )
+              (
+                tutor.reviews.reduce((acc, r) => acc + r.rating, 0) /
+                tutor.reviews.length
+              ).toFixed(1),
+            )
             : 0;
 
         // Format reviews
         const reviewsText =
           tutor.reviews.length > 0
             ? tutor.reviews
-                .map((r) => `- Rating: ${r.rating}/5. Comment: ${r.comment}`)
-                .join("\n")
+              .map((r) => `- Rating: ${r.rating}/5. Comment: ${r.comment}`)
+              .join("\n")
             : "No reviews yet.";
 
         const content = `Tutor Name: ${tutor.user.name}

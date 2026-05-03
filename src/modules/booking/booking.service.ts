@@ -19,6 +19,14 @@ const createBooking = async (
       throw new Error("Slot already booked");
     }
 
+    if (studentId === tutorId) {
+      throw new Error("You cannot book ypur own session");
+    }
+
+    if (!studentId) {
+      throw new Error("You're not logged in!")
+    }
+
     await tx.availabilitySlot.update({
       where: { id: slotId },
       data: { isBooked: true },
