@@ -6,12 +6,35 @@ class RedisService {
   private isConnected: boolean = false;
 
   async connect(): Promise<void> {
+    if (this.isConnected && this.client) {
+      return;
+    }
+
     try {
       // Try to get Redis URL from environment variables
       const redisUrl = process.env.REDIS_URL;
 
+      if (!redisUrl) {
+        console.warn("REDIS_URL is not defined in environment variables. Falling back to local configuration.");
+      }
+
+      console.log("Initializing Redis connection attempt...");
+
       if (redisUrl) {
-        this.client = createClient({ url: redisUrl });
+        this.client = createClient({
+          url: redisUrl,
+          socket: {
+            reconnectStrategy: (retries) => {
+              if (retries > 10) {
+                console.error("Redis reconnection failed after 10 retries");
+                return new Error("Redis reconnection failed");
+              }
+              return Math.min(retries * 50, 500);
+            },
+            // Add connect timeout for serverless
+            connectTimeout: 10000,
+          },
+        });
       } else {
         // Fallback to individual parameters
         const host = process.env.REDIS_HOST || "localhost";
@@ -22,6 +45,7 @@ class RedisService {
           socket: {
             host,
             port,
+            connectTimeout: 5000,
           },
           ...(password && { password }),
         });
@@ -34,7 +58,7 @@ class RedisService {
       });
 
       this.client.on("connect", () => {
-        console.log("Redis Client Connected");
+        console.log("Redis Client Connected Successfully");
         this.isConnected = true;
       });
 
@@ -50,30 +74,32 @@ class RedisService {
 
       // Reconnect strategy
       this.client.on("reconnecting", () => {
-        console.log("Redis Client Reconnecting");
+        console.log("Redis Client Reconnecting...");
       });
 
       await this.client.connect();
     } catch (error) {
-      console.error("Failed to connect to Redis:", error);
+      console.error("Failed to connect to Redis during connect() call:", error);
       this.isConnected = false;
-      // Don't throw here - the app should work even if Redis is unavailable
+      this.client = null; // Reset client so next attempt can start fresh
     }
   }
 
-  private ensureConnection(): RedisClientType {
-    if (!this.client) {
-      throw new Error("Redis client not initialized. Call connect() first.");
+  private async ensureConnection(): Promise<RedisClientType> {
+    if (!this.client || !this.isConnected) {
+      await this.connect();
     }
-    if (!this.isConnected) {
-      throw new Error("Redis client not connected.");
+
+    if (!this.client || !this.isConnected) {
+      throw new Error(`Redis connection failed. status: ${this.isConnected ? 'connected' : 'disconnected'}, client: ${this.client ? 'initialized' : 'null'}. Please check your REDIS_URL and Vercel environment variables.`);
     }
+
     return this.client;
   }
 
   async get(key: string): Promise<string | null> {
     try {
-      const client = this.ensureConnection();
+      const client = await this.ensureConnection();
       return await client.get(key);
     } catch (error) {
       console.error("Redis GET error:", error);
@@ -83,7 +109,7 @@ class RedisService {
 
   async set(key: string, value: any, ttlInSeconds: number): Promise<void> {
     try {
-      const client = this.ensureConnection();
+      const client = await this.ensureConnection();
       const stringValue =
         typeof value === "string" ? value : JSON.stringify(value);
       await client.set(key, stringValue, { EX: ttlInSeconds });
@@ -99,7 +125,7 @@ class RedisService {
 
   async delete(key: string): Promise<void> {
     try {
-      const client = this.ensureConnection();
+      const client = await this.ensureConnection();
       await client.del(key);
     } catch (error) {
       console.error("Redis DELETE error:", error);
@@ -108,11 +134,11 @@ class RedisService {
 
   async isAvailable(): Promise<boolean> {
     try {
-      const client = this.ensureConnection();
+      const client = await this.ensureConnection();
       await client.ping();
       return true;
     } catch (error) {
-      console.log(error);
+      console.log("Redis availability check failed:", error);
       return false;
     }
   }
